@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="console.js"></script>
+<script type="text/javascript">
+$(function(){
+    if (!window.WebSocket) {
+        p("お使いのブラウザはWebSocketに対応してないようです。")
+    	return;
+    }
+
+	var webSocket = new WebSocket("ws://localhost:8080/socket");
+    webSocket.onmessage = function(socket) {
+        p(socket.data);
+    }
+    webSocket.onopen = function() {
+        p("Connected.");
+    }
+    webSocket.onclose = function() {
+        p("Disconnected.");
+    }
+
+    // WebSocketを起動
+	$("#msg").keydown(function(event){
+		if (event.keyCode == 16 /*shift*/) {
+			event.target.locked = false;
+		}
+	});
+
+    $("#msg").keyup(function(event){
+        if (event.keyCode == 13 /*enter*/ && event.target.locked == false) {
+            webSocket.send(event.target.value);
+            event.target.value = null;
+        }
+        event.target.locked = true;
+        event.preventDefault();
+    });
+});
+</script>
+</head>
+<body>
+  <form onsubmit="return false;">
+    <input type="text" name="msg" id="msg" size="24">
+  </form>
+</body>
+</html>

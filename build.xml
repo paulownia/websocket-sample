@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<project name="websocket" default="build" basedir=".">
+
+    <fileset id="all-jars" dir="lib">
+        <include name="**/*.jar" />
+    </fileset>
+
+    <path id="classpath-jars">
+		<fileset refid="all-jars" />
+    </path>
+
+	<pathconvert property="manifest.classpath" refid="classpath-jars" pathsep=" " dirsep="/">
+		<map from="${basedir}" to="." />
+	</pathconvert>
+
+	<target name="build">
+		<antcall target="package"/>
+	</target>
+
+	<target name="package" depends="compile">
+		<jar destfile="websocket.jar">
+			<fileset dir="./build/classes" />
+			<manifest>
+				<attribute name="Main-Class" value="jp.paulownia.sample.websocket.Main"/>
+				<attribute name="Class-Path" value="${manifest.classpath}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="compile">
+		<mkdir dir="./build/classes" />
+		<javac srcdir="./src" destdir="./build/classes" classpathref="classpath-jars" />
+	</target>
+</project>
