@@ -14,7 +14,7 @@ $(function(){
     }
 
     // WebSocketを起動
-	var webSocket = new WebSocket("ws://localhost:8080/socket");
+	var webSocket = new WebSocket("ws://" + location.host + "/socket");
     webSocket.onmessage = function(socket) {
         p(socket.data);
     }
@@ -25,12 +25,21 @@ $(function(){
         p("Disconnected.");
     }
 
+	$("#sender").click(function(){
+		var msg = $("#msg").val();
+		if (msg) {
+			webSocket.send(msg);
+		}
+		$("#msg").val(null)
+	});
+
+
 	$("#msg").keydown(function(event){
-		if (event.keyCode == 16 /*shift*/) {
+		if (event.keyCode == 16) {   // 16 :shift
 			event.target.locked = false;
 		}
 	}).keypress(function(event){
-        if (event.keyCode == 13 /*enter*/ && event.target.locked == false ) {
+        if (event.keyCode == 13 && event.target.locked == false ) {  // 13:enter
             if (event.target.value) {
                 webSocket.send(event.target.value);
                 event.target.value = null;
@@ -38,7 +47,7 @@ $(function(){
         }
         event.target.locked = true;
     }).keyup(function() {
-        if (event.keyCode == 16 /*shift*/) {
+        if (event.keyCode == 16) {  // 16:shift
             event.target.locked = true;
         }
     });
@@ -47,7 +56,7 @@ $(function(){
 </head>
 <body>
   <form onsubmit="return false;">
-    <input type="text" name="msg" id="msg" size="24">（shift + returnで入力値の送信）
+    <input type="text" name="msg" id="msg" size="24"><input type="button" value="送信" id="sender">
   </form>
 </body>
 </html>
